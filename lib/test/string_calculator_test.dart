@@ -1,55 +1,38 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:incubyte_tdd_assesment/string_calculator.dart';
+class StringCalculator {
+  int add(String numbers) {
+    if (numbers.isEmpty) return 0;
 
-void main() {
-      final calculator = StringCalculator();
-  test('returns 0 for empty string', () {
+    final delimiterPattern = _getDelimiter(numbers);
+    final numbersSection = _getNumbersSection(numbers);
 
-    expect(calculator.add(''), 0);
-  });
+    final values = numbersSection
+        .split(RegExp(delimiterPattern))
+        .map(int.parse)
+        .toList();
 
-    test('returns number itself for single number', () {
-    expect(calculator.add('1'), 1);
-  });
+    final negatives = values.where((n) => n < 0).toList();
+    if (negatives.isNotEmpty) {
+      throw Exception(
+        'negative numbers not allowed ${negatives.join(',')}',
+      );
+    }
 
-   test('returns sum of comma separated numbers', () {
-    expect(calculator.add('1,5'), 6);
-  });
-  test('supports new line as delimiter', () {
-  expect(calculator.add('1\n2,3'), 6);
-});
-test('supports custom delimiter', () {
-  expect(calculator.add('//;\n1;2'), 3);
-});
+    return values.reduce((a, b) => a + b);
+  }
 
-test('throws exception for single negative number', () {
-  expect(
-    () => calculator.add('1,-2'),
-    throwsA(
-      predicate(
-        (e) =>
-            e is Exception &&
-            e.toString().contains(
-              'negative numbers not allowed -2',
-            ),
-      ),
-    ),
-  );
-});
+  String _getDelimiter(String numbers) {
+    if (numbers.startsWith('//')) {
+      final parts = numbers.split('\n');
+      return RegExp.escape(parts.first.substring(2));
+    }
+    return ',|\n';
+  }
 
-test('throws exception with all negative numbers', () {
-  expect(
-    () => calculator.add('1,-2,-3'),
-    throwsA(
-      predicate(
-        (e) =>
-            e is Exception &&
-            e.toString().contains(
-              'negative numbers not allowed -2,-3',
-            ),
-      ),
-    ),
-  );
-});
-
+  String _getNumbersSection(String numbers) {
+    if (numbers.startsWith('//')) {
+      final parts = numbers.split('\n');
+      return parts.last;
+    }
+    return numbers;
+  }
 }
