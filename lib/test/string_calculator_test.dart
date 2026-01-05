@@ -18,4 +18,7 @@ void main() {
   test('supports new line as delimiter', () {
   expect(calculator.add('1\n2,3'), 6);
 });
+test('supports custom delimiter', () {
+  expect(calculator.add('//;\n1;2'), 3);
+});
 }
