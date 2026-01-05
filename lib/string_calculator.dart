@@ -14,9 +14,16 @@ class StringCalculator {
 
     final values = numbersSection
         .split(RegExp(delimiterPattern))
-        .map(int.parse);
+        .map(int.parse)
+        .toList();
+
+    final negatives = values.where((n) => n < 0).toList();
+    if (negatives.isNotEmpty) {
+      throw Exception(
+        'negative numbers not allowed ${negatives.join(',')}',
+      );
+    }
 
     return values.reduce((a, b) => a + b);
   }
 }
-
