@@ -15,4 +15,7 @@ void main() {
    test('returns sum of comma separated numbers', () {
     expect(calculator.add('1,5'), 6);
   });
+  test('supports new line as delimiter', () {
+  expect(calculator.add('1\n2,3'), 6);
+});
 }
